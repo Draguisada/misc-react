@@ -77,6 +77,33 @@ export default function View() {
         },
 
     })
+    // Barra dinamica 2
+    const [barraDinamica2, mudarbarraDinamica2] = useState({
+        habilitado: true,
+        cor: '#f78383',
+        corFundo: '#df4343',
+
+        valores: {
+            atual: 10,
+            maximo: 10,
+            cor: '#573e3e'
+        },
+
+        texto: {
+            habilitado: false,
+            mostrarAoAtualizar: true,
+            texto: 'Vida?',
+            alinhamento: 'center'
+        },
+        
+        borda: {
+            tamanho: '2',
+            estilo: 'solid',
+            cor: '#f92012',
+        },
+
+    })
+    
 
     // Dados de comando
     const tempoDeAtualizacao = 1000; // milissegundos
@@ -87,14 +114,17 @@ export default function View() {
         mudarImagem(response.data.imagem);
         mudarBarraFixa1(response.data.barraFixa1);
         mudarBarraFixa2(response.data.barraFixa2);
-        mudarBarraDinamica1(response.data.barraDinamica1)
+        mudarBarraDinamica1(response.data.barraDinamica1);
+        mudarbarraDinamica2(response.data.barraDinamica2);
     }
 
     useEffect(() => {
         const interval = setInterval(() => {
             atualizarDados();
         }, tempoDeAtualizacao);
+        console.log(barraDinamica1.texto.habilitado);
         return () => clearInterval(interval);
+
     }, []);
 
 
@@ -108,6 +138,7 @@ export default function View() {
                     <BarraTexto corTexto={barraFixa2.texto.cor} corBarra={barraFixa2.cor} texto={barraFixa2.texto.texto} habilitado ={barraFixa2.habilitado} tamanhoBorda={barraFixa2.borda.tamanho+'px'} corBorda={barraFixa2.borda.cor} estiloBorda={barraFixa2.borda.estilo}/>
                     
                     <BarraDinamica corBarraFrente={barraDinamica1.cor} alinhamento={barraDinamica1.texto.alinhamento} estiloBorda={barraDinamica1.borda.estilo} corBarraFundo={barraDinamica1.corFundo} corTexto={barraDinamica1.valores.cor} tamanhoBorda={barraDinamica1.borda.tamanho} corBorda={barraDinamica1.borda.cor} atual={barraDinamica1.valores.atual} maximo={barraDinamica1.valores.maximo} texto={barraDinamica1.texto.texto} textoMostrar={barraDinamica1.texto.habilitado} habilitado ={barraDinamica1.habilitado}/>
+                    <BarraDinamica corBarraFrente={barraDinamica2.cor} alinhamento={barraDinamica2.texto.alinhamento} estiloBorda={barraDinamica2.borda.estilo} corBarraFundo={barraDinamica2.corFundo} corTexto={barraDinamica2.valores.cor} tamanhoBorda={barraDinamica2.borda.tamanho} corBorda={barraDinamica2.borda.cor} atual={barraDinamica2.valores.atual} maximo={barraDinamica2.valores.maximo} texto={barraDinamica2.texto.texto} textoMostrar={barraDinamica2.texto.habilitado} habilitado ={barraDinamica2.habilitado}/>
                 </div>
 
 

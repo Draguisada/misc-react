@@ -123,7 +123,51 @@ export default function Controll() {
     const mudarTextoBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, texto: {...barraDinamica1.texto, texto: novoValor} })}
     const mudarTextoAlinhamentoBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, texto: {...barraDinamica1.texto, alinhamento: novoValor} })}
 
+    // Barra dinamica 2
+    const [barraDinamica2, mudarbarraDinamica2] = useState({
+        habilitado: true,
+        cor: '#f78383',
+        corFundo: '#df4343',
 
+        valores: {
+            atual: 10,
+            maximo: 10,
+            cor: '#573e3e'
+        },
+
+        texto: {
+            habilitado: false,
+            mostrarAoAtualizar: true,
+            texto: 'Vida?',
+            alinhamento: 'center'
+        },
+        
+        borda: {
+            tamanho: '2',
+            estilo: 'solid',
+            cor: '#f92012',
+        },
+
+    })
+
+    const mudarHabilitarbarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, habilitado: novoValor })}
+    const mudarCorTextobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, cor: novoValor} } )}
+    const mudarAlinhamentoTextobarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, alinhamento: novoValor} })}
+    const mudarcorbarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, cor: novoValor })}
+    
+    const mudarcorFundobarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, corFundo: novoValor })}
+
+    const mudartamanhoBordabarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, borda: {...barraDinamica2.borda, tamanho: novoValor} })}
+    const mudarcorBordabarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, borda: {...barraDinamica2.borda, cor: novoValor} })}
+    const mudarestiloBordabarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, borda: {...barraDinamica2.borda, estilo: novoValor} })}
+
+    const mudarValorAtualbarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, atual: novoValor} })}
+    const mudarValorMaximobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, maximo: novoValor} })}
+
+    const mudarTextoHabilitadobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, habilitado: novoValor} })}
+    const mudarTextoMudarAoAtualizarbarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, mostrarAoAtualizar: novoValor} })}
+    const mudarTextobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, texto: novoValor} })}
+    const mudarTextoAlinhamentobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, alinhamento: novoValor} })}
 
 
     
@@ -131,13 +175,13 @@ export default function Controll() {
     useEffect(() => {
         handleSubmit();
         console.log('submit enviado')
-    }, [imagem, barraFixa1, barraFixa2]);
+    }, [imagem, barraFixa1, barraFixa2, barraDinamica1, barraDinamica2]);
 
     async function handleSubmit(e = '') {
         if (e) e.preventDefault();
 
         axios.post('http://localhost:5000/mudar/', { 
-            imagem, barraFixa1, barraFixa2, barraDinamica1
+            imagem, barraFixa1, barraFixa2, barraDinamica1, barraDinamica2
         });
     }
 
@@ -239,7 +283,38 @@ export default function Controll() {
                         </select>
                     </div>
                 <hr />
-                
+                {/* Barra dinamica 2 */}
+                <BarraDinamica corBarraFrente={barraDinamica2.cor} alinhamento={barraDinamica2.texto.alinhamento} estiloBorda={barraDinamica2.borda.estilo} controllRoom={true} corBarraFundo={barraDinamica2.corFundo} corTexto={barraDinamica2.valores.cor} tamanhoBorda={barraDinamica2.borda.tamanho} corBorda={barraDinamica2.borda.cor} atual={barraDinamica2.valores.atual} maximo={barraDinamica2.valores.maximo} texto={barraDinamica2.texto.texto} textoMostrar={true} habilitado ={true} mudarAtual={mudarValorAtualbarraDinamica2} mudarMaximo={mudarValorMaximobarraDinamica2} mudarTexto={mudarTextobarraDinamica2}/>
+                <div style={{display: "flex", flexWrap: "true"}}>
+                        <TextoOptionColor texto={'Cor texto'} value={barraDinamica2.valores.cor} changeValue={mudarCorTextobarraDinamica2}/>
+                        <TextoOptionColor texto={'Cor da barra da frente'} value={barraDinamica2.cor} changeValue={mudarcorbarraDinamica2}/>
+                        <TextoOptionColor texto={'Cor da barra do fundo'} value={barraDinamica2.corFundo} changeValue={mudarcorFundobarraDinamica2}/>
+                        <TextoOptionColor texto={'Cor da borda da barra'} value={barraDinamica2.borda.cor} changeValue={mudarcorBordabarraDinamica2}/>
+                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraDinamica2.habilitado} changeValue={mudarHabilitarbarraDinamica2}/>
+                        <div style={{ width:"fit-content", borderRight: 'solid white 1px', padding: "0 1%"}}>
+                            <p>Tamanho da borda</p>
+                            <input type="number" value={barraDinamica2.borda.tamanho} onChange={(e) => mudartamanhoBordabarraDinamica2(e.target.value)} style={{display: "flex", width: '3rem'}}/>
+                        </div>
+                        <select onChange={(e) => mudarestiloBordabarraDinamica2(e.target.value)} select={barraDinamica2.borda.estilo} multiple>
+                            <option value="solid">Sólido</option>
+                            <option value="dashed">Dashed</option>
+                            <option value="dotted">Dotted</option>
+                            <option value="double">Duplo</option>
+                            <option value="groove">Groove</option>
+                            <option value="ridge">Ridge</option>
+                        </select>
+                    </div>
+                    <h2>Texto sem mostrar os valores</h2>
+                    <div style={{display: "flex", flexWrap: "true", justifyContent: 'center'}}>
+                        
+                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraDinamica2.texto.habilitado} changeValue={mudarTextoHabilitadobarraDinamica2}/>
+                        <TextoOptionCheckbox texto={'Mostrar valores quando atualizar'} value={barraDinamica2.texto.mostrarAoAtualizar} changeValue={mudarTextoMudarAoAtualizarbarraDinamica2}/>
+                        <select onChange={(e) => mudarTextoAlinhamentobarraDinamica2(e.target.value)} select={barraDinamica2.texto.alinhamento} multiple>
+                            <option value="left">Esquerda</option>
+                            <option value="center">Centro</option>
+                            <option value="right">Direita</option>
+                        </select>
+                    </div>
                 <hr />
             </div>
 
