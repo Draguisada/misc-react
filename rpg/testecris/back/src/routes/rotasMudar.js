@@ -24,4 +24,9 @@ router.get('/', async (req, res) => {
     console.log(db.listarItem())
     res.json({ ...db.listarItem() });
 });
+
+router.get('/resetar', async (req, res) => {
+    db.reset();
+    res.json({ message: "Banco de dados na memória limpo" });
+});
 module.exports = router;

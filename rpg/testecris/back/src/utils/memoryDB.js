@@ -11,6 +11,10 @@ class BD {
     mudar(key, value) {
         this.#db[key] = value;
     }
+
+    reset() {
+        this.#db = {};
+    }
     
     
 }

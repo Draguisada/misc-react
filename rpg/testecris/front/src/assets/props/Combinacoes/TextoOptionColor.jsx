@@ -1,6 +1,3 @@
-
-
-
 export default function TextoOptionColor({texto, value, changeValue}) {
 
     return (

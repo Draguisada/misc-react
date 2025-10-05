@@ -8,7 +8,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "start": "concurrently \"npm run start-dev-back\" \"npm run start-dev-front\"",
     "dev": "nodemon server.js",
     "start-dev-back": "nodemon server.js",
     "start-dev-front": "cd ../front && npm run dev",

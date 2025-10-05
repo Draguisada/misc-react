@@ -1,7 +1,6 @@
-export default function BarraTexto({ corBarra = '#000', texto = '', corTexto, corBorda = '#fff', tamanhoBorda = '2px', estiloBorda = 'solid', habilitado, handleChange}) {
+export default function BarraTexto({ corBarra = '#000', texto = '', corTexto, corBorda = '#fff', tamanhoBorda = '2px', estiloBorda = 'solid', habilitado, handleChange, alinhamento = 'center'}) {
 
     if (!habilitado) return
-    
     return (
         <>
             <div style={{
@@ -9,11 +8,12 @@ export default function BarraTexto({ corBarra = '#000', texto = '', corTexto, co
                 borderWidth: tamanhoBorda, 
                 borderColor: corBorda, 
                 borderStyle: estiloBorda,
-                 }}
-                className="barra" >
+                
+                }}
+                className={"barra"} >
                 
                 <input type="text" value={texto} onChange={(e) => handleChange(e.target.value)}
-                style={{color: corTexto}}
+                style={{color: corTexto, width: "100%", textAlign: alinhamento}}
                 />
 
             </div>
