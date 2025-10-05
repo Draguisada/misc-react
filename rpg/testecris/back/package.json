@@ -1,0 +1,28 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Draguisada",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "start-dev-back": "nodemon server.js",
+    "start-dev-front": "cd ../front && npm run dev",
+    "2": "concurrently \"npm run start-dev-back\" \"npm run start-dev-front\""
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

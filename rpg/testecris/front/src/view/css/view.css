@@ -1,0 +1,67 @@
+:root {
+    background-color: transparent;
+}
+
+#root {
+    max-width: 1000vw;
+    margin: 0 0;
+    padding: 0;
+    text-align: center;
+}
+
+body {
+    background-color: transparent;
+    place-items: baseline;
+}
+
+.imagemJSX {
+    width: 500px;
+    height: 500px;
+}
+
+.barra {
+    width: 100%;
+    font-size: 2rem;
+    height: 3rem;
+
+    & > input {
+        margin: 0;
+        border: 0;
+        padding: 0;
+
+        background-color: transparent;
+
+        font-size: 2rem;
+        text-align: center;
+    }
+}
+
+.BarraTotal {
+    width: 100%;
+    font-size: 2rem;
+    height: 3rem;
+
+
+    & input {
+        margin: 0;
+        border: 0;
+        padding: 0;
+
+        background-color: transparent;
+
+        font-size: 2rem;
+        text-align: center;
+
+        transform: translateY(-130%);
+        width: 30%;
+        z-index: 100;
+    }
+    & p {
+        transform: translateY(-130%);
+        width: fit-content;
+        display: flex;
+        margin: 0;
+        border: 0;
+        padding: 0;
+    }
+}
