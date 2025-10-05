@@ -8,12 +8,8 @@ import BarraDinamica from "../assets/props/BarraDinamica";
 import Imagem from "../assets/props/Imagem";
 
 export default function View() {
-    // Iniciar dados que são mudáveis
-    const [nome, mudarNome] = useState('Indefinido');
-    const [cor, mudarCor] = useState('#232323');
-    const [rounded, mudarRounded] = useState('');
-    const [folder, mudarFolder] = useState('');
-    const [imgName, mudarImgName] = useState('imagem.png');
+
+    const [valores, mudarValores] = useState({})
 
     // Dados de comando
     const tempoDeAtualizacao = 1000; // milissegundos
@@ -21,10 +17,10 @@ export default function View() {
     async function atualizarDados() {
         const response = await axios.get('http://localhost:5000/mudar');
 
-        mudarCor(response.data.cor);
-        mudarNome(response.data.nome);
+        mudarValores(response.data);
+        // console.log(valores);
     }
-    atualizarDados();
+    // atualizarDados();
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -34,15 +30,16 @@ export default function View() {
     }, []);
 
     return (
-        <div style={{backgroundColor: cor}}>
-            <h1>{nome}</h1>
-            <h1>{cor}</h1>
+        <div>
+           <div id="total">
+                <Imagem rounded={valores.rounded+valores.roundedU} imgName={valores.imgName} folder={valores.folder}/>
+                            
+                <div id="Barras">
+                    <BarraTexto corBarra={'transparent'} corTexto={valores.corTextoNome} texto={valores.nome} tamanhoBorda="0" habilitado ={valores.habilitarNome}/>
+                    <BarraTexto corBarra={'#f72323'} texto={'vida?'}/>
+                    <BarraDinamica corBarraFrente={'#2679f5ff'} corBarraFundo="#005266ff" corTexto="#131313ff" atualN={10} maximoN={10} texto={'Sanidade'} textoMostrarN={false}/>
+                </div>
 
-            <Imagem rounded={rounded} imgName={imgName} folder={folder}/>
-            
-            <div id="Barras">
-                <BarraTexto corBarra={'#f72323'} texto={'vida?'}/>
-                <BarraDinamica corBarraFrente={'#fff'} corBarraFundo="#000" corTexto="#838383" atual={10} maximo={10}/>
 
             </div>
         </div>

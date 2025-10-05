@@ -8,16 +8,21 @@ export default function BarraDinamica({
     corBorda = '#fff', 
     tamanhoBorda = '2px', 
     estiloBorda = 'solid', 
-    handleChangeText,
-    corTexto = '#808080'
+    corTexto = '#808080',
+    texto = '',
+    textoMostrarN = false,
+    habilitado = true
 
     }) {
 
-        // To-do: Mostrar um texto e só mostrar o valor quando: muda o valor ou passa o mouse por cima; (ou um toggle)
+    if (!habilitado) return
 
     const [atual, mudarAtual] = useState(atualN);
     const [maximo, mudarMaximo] = useState(maximoN);
-        
+    const [textoMostrar, mudarTextoMostrar] = useState(textoMostrarN)
+
+    const tempoDeAtualizacao = 1000; // milissegundos
+    
 
     function lerp(atual, max) {
         // (atual - 0) / (max - 0)
@@ -27,7 +32,6 @@ export default function BarraDinamica({
         // normalizaçao * 0 + (1 - normalizaçao) * 100
         // const linearInterpolated = (1 - norm) * 100
         const linearInterpolated = norm * 100;
-        console.log(linearInterpolated)
         return `${Math.min(linearInterpolated, 100)}%`;
     }        
 
@@ -55,7 +59,11 @@ export default function BarraDinamica({
                     id="frente"/>                    
 
             </div>
-            <input type="number" value={atual} min={0} max={maximo} onChange={(e) => mudarAtual(e.target.value)}
+            
+            {textoMostrar ?
+             <input type="text" value={texto} style={{color: corTexto}} readOnly={true}/> :
+            <>
+            <input type="number" value={atual} min={0} max={maximo} onChange={(e) => {mudarAtual(e.target.value)}}
             style={{
                 color: corTexto,
                 textAlign: 'right'
@@ -67,7 +75,8 @@ export default function BarraDinamica({
                 color: corTexto,
                 textAlign: 'left'
             }}
-            />
+            /></>}
+            
         
         </div>
 

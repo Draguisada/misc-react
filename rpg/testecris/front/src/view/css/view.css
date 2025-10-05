@@ -65,3 +65,26 @@ body {
         padding: 0;
     }
 }
+
+#Barras {
+    transform: translate(-13%, 10%);
+}
+
+#total {
+    display: flex;
+    align-items: flex-end;
+}
+
+form {
+    width: 100vw;
+    & #total {
+        align-items: center;
+        gap: 5%;
+
+        & #Barras {
+            transform: translate(0, 0);
+        }
+    }
+
+    
+}

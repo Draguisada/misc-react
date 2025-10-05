@@ -1,13 +1,7 @@
 class BD {
-    #db = []
+    #db = {}
     constructor() {
-        this.#db = {
-            'cor': '#232323',
-            'nome': 'Indefinido',
-            'rounded': '',
-            'folder': '',
-            'imgName': 'imagem.png'
-        }
+        this.#db = {}
     }
 
     listarItem() {

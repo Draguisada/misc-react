@@ -4,14 +4,13 @@ const db = require('../utils/memoryDB.js');
 
 // Rota de login
 router.post('/', async (req, res) => {
-    // Pega o email e a senha que vieram no corpo da requisição
-    const { cor, nome } = req.body;
 
     if (Object.keys(req.body).length == 0) return res.status(401).json({ message: 'Sem nenhum dado enviado' });
     
-    console.log(items = Object.keys(req.body))
-    console.log(req.body)
-    console.log(req.body[items])
+    items = Object.keys(req.body)
+
+    // console.log(items)
+    // console.log(req.body)
 
     // Alterar todos os itens enviados modularmente.
     items.forEach(element => {
@@ -22,7 +21,7 @@ router.post('/', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-
+    console.log(db.listarItem())
     res.json({ ...db.listarItem() });
 });
 module.exports = router;
