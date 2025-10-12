@@ -19,7 +19,7 @@ function App() {
           path="/view"
           element={ <View /> }
         />
-      </Routes>
+      </Routes> 
 
     </Router>
   )

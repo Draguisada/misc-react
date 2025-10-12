@@ -13,7 +13,7 @@ export default function BarraTexto({ corBarra = '#000', texto = '', corTexto, co
                 className={"barra"} >
                 
                 <input type="text" value={texto} onChange={(e) => handleChange(e.target.value)}
-                style={{color: corTexto, width: "100%", textAlign: alinhamento}}
+                style={{color: corTexto, width: 'fit-content', textAlign: alinhamento}}
                 />
 
             </div>

@@ -15,114 +15,47 @@ export default function View() {
         folder: '',
         imgName: 'imagem.png'
     })
-    // Barra fixa 1 -> Nome
-    const [barraFixa1, mudarBarraFixa1] = useState({
-        habilitado: true,
-        cor: 'transparent',
-
-        texto: {
-            texto: '<Nome>',
-            cor: '#ffffff',
-            alinhamento: 'center'
-        },
-        
-        borda: {
-            tamanho: '0',
-            estilo: 'solid',
-            cor: 'transparent'
-        }
-
-    })
-    // Barra fixa 2
-    const [barraFixa2, mudarBarraFixa2] = useState({
-        habilitado: true,
-        cor: '#f78383',
-
-        texto: {
-            texto: 'Habilidade?',
-            cor: '#573e3e',
-            alinhamento: 'center'
-        },
-        
-        borda: {
-            tamanho: '2',
-            estilo: 'solid',
-            cor: '#f92012'
-        }
-
-    })
-    // Barra dinamica 1
-    const [barraDinamica1, mudarBarraDinamica1] = useState({
-        habilitado: true,
-        cor: '#f78383',
-        corFundo: '#df4343',
-
-        valores: {
-            atual: 10,
-            maximo: 10,
-            cor: '#573e3e'
-        },
-
-        texto: {
-            habilitado: false,
-            mostrarAoAtualizar: true,
-            texto: 'Vida?',
-            alinhamento: 'center'
-        },
-        
-        borda: {
-            tamanho: '2',
-            estilo: 'solid',
-            cor: '#f92012',
-        },
-
-    })
-    // Barra dinamica 2
-    const [barraDinamica2, mudarbarraDinamica2] = useState({
-        habilitado: true,
-        cor: '#f78383',
-        corFundo: '#df4343',
-
-        valores: {
-            atual: 10,
-            maximo: 10,
-            cor: '#573e3e'
-        },
-
-        texto: {
-            habilitado: false,
-            mostrarAoAtualizar: true,
-            texto: 'Vida?',
-            alinhamento: 'center'
-        },
-        
-        borda: {
-            tamanho: '2',
-            estilo: 'solid',
-            cor: '#f92012',
-        },
-
-    })
+    // Dynamic Fixed Bars
+    const [barrasFixas, setBarrasFixas] = useState([])
+    
+    // Dynamic Dynamic Bars
+    const [barrasDinamicas, setBarrasDinamicas] = useState([])
     
 
     // Dados de comando
-    const tempoDeAtualizacao = 1000; // milissegundos
+    const tempoDeAtualizacao = 500; // milissegundos
 
     async function atualizarDados() {
         const response = await axios.get('http://localhost:5000/mudar');
 
         mudarImagem(response.data.imagem);
-        mudarBarraFixa1(response.data.barraFixa1);
-        mudarBarraFixa2(response.data.barraFixa2);
-        mudarBarraDinamica1(response.data.barraDinamica1);
-        mudarbarraDinamica2(response.data.barraDinamica2);
+        
+        // Handle arrays if they exist, otherwise fallback to individual bars for backward compatibility
+        if (response.data.barrasFixas) {
+            setBarrasFixas(response.data.barrasFixas);
+        } else {
+            // Fallback for old individual bar format
+            const oldBarrasFixas = [];
+            if (response.data.barraFixa1) oldBarrasFixas.push({...response.data.barraFixa1, id: 1});
+            if (response.data.barraFixa2) oldBarrasFixas.push({...response.data.barraFixa2, id: 2});
+            setBarrasFixas(oldBarrasFixas);
+        }
+        
+        if (response.data.barrasDinamicas) {
+            setBarrasDinamicas(response.data.barrasDinamicas);
+        } else {
+            // Fallback for old individual bar format
+            const oldBarrasDinamicas = [];
+            if (response.data.barraDinamica1) oldBarrasDinamicas.push({...response.data.barraDinamica1, id: 1});
+            if (response.data.barraDinamica2) oldBarrasDinamicas.push({...response.data.barraDinamica2, id: 2});
+            setBarrasDinamicas(oldBarrasDinamicas);
+        }
     }
 
-    useEffect(() => {
+        useEffect(() => {
         const interval = setInterval(() => {
             atualizarDados();
         }, tempoDeAtualizacao);
-        console.log(barraDinamica1.texto.habilitado);
         return () => clearInterval(interval);
 
     }, []);
@@ -134,11 +67,41 @@ export default function View() {
                 <Imagem rounded={imagem.rounded+imagem.roundedU} imgName={imagem.imgName} folder={imagem.folder}/>
                             
                 <div id="Barras">
-                    <BarraTexto corBarra={'transparent'} corTexto={barraFixa1.texto.cor} texto={barraFixa1.texto.texto} tamanhoBorda="0" habilitado ={barraFixa1.habilitado} alinhamento={barraFixa1.texto.alinhamento}/>
-                    <BarraTexto corTexto={barraFixa2.texto.cor} corBarra={barraFixa2.cor} texto={barraFixa2.texto.texto} habilitado ={barraFixa2.habilitado} tamanhoBorda={barraFixa2.borda.tamanho+'px'} corBorda={barraFixa2.borda.cor} estiloBorda={barraFixa2.borda.estilo}/>
+                    {/* Dynamic Fixed Bars */}
+                    {barrasFixas.map((barra) => (
+                        <BarraTexto 
+                            key={barra.id}
+                            corBarra={barra.cor} 
+                            corTexto={barra.texto.cor} 
+                            texto={barra.texto.texto} 
+                            tamanhoBorda={barra.borda.tamanho+'px'} 
+                            habilitado={barra.habilitado} 
+                            alinhamento={barra.texto.alinhamento}
+                            corBorda={barra.borda.cor}
+                            estiloBorda={barra.borda.estilo}
+                        />
+                    ))}
                     
-                    <BarraDinamica corBarraFrente={barraDinamica1.cor} alinhamento={barraDinamica1.texto.alinhamento} estiloBorda={barraDinamica1.borda.estilo} corBarraFundo={barraDinamica1.corFundo} corTexto={barraDinamica1.valores.cor} tamanhoBorda={barraDinamica1.borda.tamanho} corBorda={barraDinamica1.borda.cor} atual={barraDinamica1.valores.atual} maximo={barraDinamica1.valores.maximo} texto={barraDinamica1.texto.texto} textoMostrar={barraDinamica1.texto.habilitado} habilitado ={barraDinamica1.habilitado}/>
-                    <BarraDinamica corBarraFrente={barraDinamica2.cor} alinhamento={barraDinamica2.texto.alinhamento} estiloBorda={barraDinamica2.borda.estilo} corBarraFundo={barraDinamica2.corFundo} corTexto={barraDinamica2.valores.cor} tamanhoBorda={barraDinamica2.borda.tamanho} corBorda={barraDinamica2.borda.cor} atual={barraDinamica2.valores.atual} maximo={barraDinamica2.valores.maximo} texto={barraDinamica2.texto.texto} textoMostrar={barraDinamica2.texto.habilitado} habilitado ={barraDinamica2.habilitado}/>
+                    {/* Dynamic Dynamic Bars */}
+                    {barrasDinamicas.map((barra) => (
+                        <BarraDinamica 
+                            key={barra.id}
+                            corBarraFrente={barra.cor} 
+                            alinhamento={barra.texto.alinhamento} 
+                            estiloBorda={barra.borda.estilo} 
+                            corBarraFundo={barra.corFundo} 
+                            corTexto={barra.valores.cor} 
+                            tamanhoBorda={barra.borda.tamanho} 
+                            corBorda={barra.borda.cor} 
+                            atual={barra.valores.atual} 
+                            maximo={barra.valores.maximo} 
+                            texto={barra.texto.texto} 
+                            textoMostrar={barra.texto.habilitado} 
+                            mostrarValorQuandoAtualizado={barra.texto.mostrarAoAtualizar}
+                            habilitado={barra.habilitado}
+                            tempoMostrarValoresTemporariamente={barra.texto.tempoMostrarValoresTemporariamente}
+                        />
+                    ))}
                 </div>
 
 

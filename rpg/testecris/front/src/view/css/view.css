@@ -36,11 +36,16 @@ body {
     }
 }
 
+#controll .BarraTotal {
+    & input {
+        width: 30%;
+    }
+}
+
 .BarraTotal {
     width: 100%;
     font-size: 2rem;
     height: 3rem;
-
 
     & input {
         margin: 0;
@@ -51,9 +56,9 @@ body {
 
         font-size: 2rem;
         text-align: center;
+        width: 30%;
 
         transform: translateY(-130%);
-        width: 30%;
         z-index: 100;
     }
     & p {
@@ -70,13 +75,27 @@ body {
     transform: translate(-13%, 10%);
 }
 
+#controll #Barras {
+    display: flex;
+    gap: 2%;
+    width: 100%;
+
+    & > div:nth-child(1) {
+        width: 40%;
+    }
+    & > div:last-child {
+        width: 60%;
+    }
+}
+
 #total {
     display: flex;
     align-items: flex-end;
 }
 
 form {
-    width: 100vw;
+    min-width: 100vw;
+    width: 120vw;
     & #total {
         align-items: center;
         gap: 5%;

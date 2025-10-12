@@ -1,5 +1,4 @@
-import { useState } from "react"
-import { useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import axios from 'axios'
 
 import TextoOptionColor from "../assets/props/Combinacoes/TextoOptionColor";
@@ -23,174 +22,202 @@ export default function Controll() {
     const mudarFolder = (novoValor) => { mudarImagem({ ...imagem, folder: novoValor })}
     const mudarImgName = (novoValor) => {mudarImagem({ ...imagem, imgName: novoValor })}
 
-    // Barra fixa 1 -> Nome
-    const [barraFixa1, mudarBarraFixa1] = useState({
-        habilitado: true,
-        cor: 'transparent',
-
-        texto: {
-            texto: '<Nome>',
-            cor: '#ffffff',
-            alinhamento: 'center'
+    // Dynamic Fixed Bars
+    const [barrasFixas, setBarrasFixas] = useState([
+        {
+            id: 1,
+            habilitado: true,
+            cor: 'transparent',
+            texto: {
+                texto: '<Nome>',
+                cor: '#ffffff',
+                alinhamento: 'center'
+            },
+            borda: {
+                tamanho: '0',
+                estilo: 'solid',
+                cor: 'transparent'
+            }
         },
-        
-        borda: {
-            tamanho: '0',
-            estilo: 'solid',
-            cor: 'transparent'
+        {
+            id: 2,
+            habilitado: true,
+            cor: '#f78383',
+            texto: {
+                texto: 'Habilidade?',
+                cor: '#DFDFDF',
+                alinhamento: 'center'
+            },
+            borda: {
+                tamanho: '2',
+                estilo: 'solid',
+                cor: '#f92012'
+            }
         }
+    ])
 
-    })
+    // Generic update functions for fixed bars
+    const updateBarraFixa = (barId, field, value) => {
+        setBarrasFixas(prev => prev.map(bar => 
+            bar.id === barId ? { ...bar, [field]: value } : bar
+        ));
+    };
 
-    const mudarHabilitarNome = (novoValor) => { mudarBarraFixa1({ ...barraFixa1, habilitado: novoValor })}
-    const mudarNome = (novoValor) => { mudarBarraFixa1({ ...barraFixa1, texto: { ...barraFixa1.texto, texto:novoValor} })}
-    const mudarCorTextoNome = (novoValor) => { mudarBarraFixa1({ ...barraFixa1, texto: { ...barraFixa1.texto, cor:novoValor} })}
-    const mudarAlinhamentoTextoNome = (novoValor) => {mudarBarraFixa1({ ...barraFixa1, texto:{ ...barraFixa1.texto, alinhamento:novoValor} })}
+    const updateBarraFixaTexto = (barId, field, value) => {
+        setBarrasFixas(prev => prev.map(bar => 
+            bar.id === barId ? { 
+                ...bar, 
+                texto: { ...bar.texto, [field]: value } 
+            } : bar
+        ));
+    };
 
-    // Outras barras
-    // Barra fixa 2
-    const [barraFixa2, mudarBarraFixa2] = useState({
-        habilitado: true,
-        cor: '#f78383',
+    const updateBarraFixaBorda = (barId, field, value) => {
+        setBarrasFixas(prev => prev.map(bar => 
+            bar.id === barId ? { 
+                ...bar, 
+                borda: { ...bar.borda, [field]: value } 
+            } : bar
+        ));
+    };
 
-        texto: {
-            texto: 'Habilidade?',
-            cor: '#573e3e',
-            alinhamento: 'center'
+    // Add/Remove functions for fixed bars
+    const addBarraFixa = () => {
+        const newId = Math.max(...barrasFixas.map(b => b.id), 0) + 1;
+        setBarrasFixas(prev => [...prev, {
+            id: newId,
+            habilitado: true,
+            cor: '#f78383',
+            texto: { texto: 'Nova Barra', cor: '#573e3e', alinhamento: 'center'},
+            borda: { tamanho: '2', estilo: 'solid', cor: '#f92012' }
+        }]);
+    };
+
+    const removeBarraFixa = (barId) => {
+        setBarrasFixas(prev => prev.filter(bar => bar.id !== barId));
+    };
+
+    // Dynamic Dynamic Bars
+    const [barrasDinamicas, setBarrasDinamicas] = useState([
+        {
+            id: 1,
+            habilitado: true,
+            cor: '#f78383',
+            corFundo: '#df4343',
+            valores: {
+                atual: 10,
+                maximo: 10,
+                cor: '#C9C9C9'
+            },
+            texto: {
+                habilitado: false,
+                mostrarAoAtualizar: true,
+                texto: 'Vida?',
+                alinhamento: 'center',
+                tempoMostrarValoresTemporariamente: 2
+            },
+            borda: {
+                tamanho: '2',
+                estilo: 'solid',
+                cor: '#f92012'
+            }
         },
-        
-        borda: {
-            tamanho: '2',
-            estilo: 'solid',
-            cor: '#f92012'
+        {
+            id: 2,
+            habilitado: true,
+            cor: '#1E3E63',
+            corFundo: '#010031',
+            valores: {
+                atual: 10,
+                maximo: 10,
+                cor: '#E0C8FF'
+            },
+            texto: {
+                habilitado: false,
+                mostrarAoAtualizar: true,
+                texto: 'Sanidade?',
+                alinhamento: 'center',
+                tempoMostrarValoresTemporariamente: 2
+            },
+            borda: {
+                tamanho: '2',
+                estilo: 'solid',
+                cor: '#0B0029FF'
+            }
         }
+    ])
 
-    })
+    // Generic update functions for dynamic bars
+    const updateBarraDinamica = (barId, field, value) => {
+        setBarrasDinamicas(prev => prev.map(bar => 
+            bar.id === barId ? { ...bar, [field]: value } : bar
+        ));
+    };
 
-    const mudarHabilitarBarraFixa2 = (novoValor) => { mudarBarraFixa2({ ...barraFixa2, habilitado: novoValor })}
-    const mudartextoBarraFixa2 = (novoValor) => { mudarBarraFixa2({ ...barraFixa2, texto: {...barraFixa2.texto, texto: novoValor} })}
-    const mudarCorTextoBarraFixa2 = (novoValor) => { mudarBarraFixa2({ ...barraFixa2, texto: {...barraFixa2.texto, cor: novoValor} } )}
-    const mudarAlinhamentoTextoBarraFixa2 = (novoValor) => {mudarBarraFixa2({ ...barraFixa2, texto: {...barraFixa2.texto, alinhamento: novoValor} })}
-    const mudarcorBarraFixa2 = (novoValor) => {mudarBarraFixa2({ ...barraFixa2, cor: novoValor })}
+    const updateBarraDinamicaValores = (barId, field, value) => {
+        setBarrasDinamicas(prev => prev.map(bar => 
+            bar.id === barId ? { 
+                ...bar, 
+                valores: { ...bar.valores, [field]: value } 
+            } : bar
+        ));
+    };
 
-    const mudartamanhoBordaBarraFixa2 = (novoValor) => {mudarBarraFixa2({ ...barraFixa2, borda: {...barraFixa2.borda, tamanho: novoValor} })}
-    const mudarcorBordaBarraFixa2 = (novoValor) => {mudarBarraFixa2({ ...barraFixa2, borda: {...barraFixa2.borda, cor: novoValor} })}
-    const mudarestiloBordaBarraFixa2 = (novoValor) => {mudarBarraFixa2({ ...barraFixa2, borda: {...barraFixa2.borda, estilo: novoValor} })}
+    const updateBarraDinamicaTexto = (barId, field, value) => {
+        setBarrasDinamicas(prev => prev.map(bar => 
+            bar.id === barId ? { 
+                ...bar, 
+                texto: { ...bar.texto, [field]: value } 
+            } : bar
+        ));
+    };
 
-    // Barra dinamica 1
-    const [barraDinamica1, mudarBarraDinamica1] = useState({
-        habilitado: true,
-        cor: '#f78383',
-        corFundo: '#df4343',
+    const updateBarraDinamicaBorda = (barId, field, value) => {
+        setBarrasDinamicas(prev => prev.map(bar => 
+            bar.id === barId ? { 
+                ...bar, 
+                borda: { ...bar.borda, [field]: value } 
+            } : bar
+        ));
+    };
 
-        valores: {
-            atual: 10,
-            maximo: 10,
-            cor: '#573e3e'
-        },
+    // Add/Remove functions for dynamic bars
+    const addBarraDinamica = () => {
+        const newId = Math.max(...barrasDinamicas.map(b => b.id), 0) + 1;
+        setBarrasDinamicas(prev => [...prev, {
+            id: newId,
+            habilitado: true,
+            cor: '#f78383',
+            corFundo: '#df4343',
+            valores: { atual: 10, maximo: 10, cor: '#573e3e' },
+            texto: { habilitado: false, mostrarAoAtualizar: true, texto: 'Nova Barra', alinhamento: 'center', tempoMostrarValoresTemporariamente: 2 },
+            borda: { tamanho: '2', estilo: 'solid', cor: '#f92012' }
+        }]);
+    };
 
-        texto: {
-            habilitado: false,
-            mostrarAoAtualizar: true,
-            texto: 'Vida?',
-            alinhamento: 'center'
-        },
-        
-        borda: {
-            tamanho: '2',
-            estilo: 'solid',
-            cor: '#f92012',
-        },
+    const removeBarraDinamica = (barId) => {
+        setBarrasDinamicas(prev => prev.filter(bar => bar.id !== barId));
+    };
 
-    })
+    const handleSubmit = useCallback(async (e = '') => {
+        if (e) e.preventDefault();
 
-    const mudarHabilitarBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, habilitado: novoValor })}
-    const mudarCorTextoBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, valores: {...barraDinamica1.valores, cor: novoValor} } )}
-    const mudarAlinhamentoTextoBarraDinamica1 = (novoValor) => {mudarBarraDinamica1({ ...barraDinamica1, valores: {...barraDinamica1.valores, alinhamento: novoValor} })}
-    const mudarcorBarraDinamica1 = (novoValor) => {mudarBarraDinamica1({ ...barraDinamica1, cor: novoValor })}
-    
-    const mudarcorFundoBarraDinamica1 = (novoValor) => {mudarBarraDinamica1({ ...barraDinamica1, corFundo: novoValor })}
-
-    const mudartamanhoBordaBarraDinamica1 = (novoValor) => {mudarBarraDinamica1({ ...barraDinamica1, borda: {...barraDinamica1.borda, tamanho: novoValor} })}
-    const mudarcorBordaBarraDinamica1 = (novoValor) => {mudarBarraDinamica1({ ...barraDinamica1, borda: {...barraDinamica1.borda, cor: novoValor} })}
-    const mudarestiloBordaBarraDinamica1 = (novoValor) => {mudarBarraDinamica1({ ...barraDinamica1, borda: {...barraDinamica1.borda, estilo: novoValor} })}
-
-    const mudarValorAtualBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, valores: {...barraDinamica1.valores, atual: novoValor} })}
-    const mudarValorMaximoBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, valores: {...barraDinamica1.valores, maximo: novoValor} })}
-
-    const mudarTextoHabilitadoBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, texto: {...barraDinamica1.texto, habilitado: novoValor} })}
-    const mudarTextoMudarAoAtualizarBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, texto: {...barraDinamica1.texto, mostrarAoAtualizar: novoValor} })}
-    const mudarTextoBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, texto: {...barraDinamica1.texto, texto: novoValor} })}
-    const mudarTextoAlinhamentoBarraDinamica1 = (novoValor) => { mudarBarraDinamica1({ ...barraDinamica1, texto: {...barraDinamica1.texto, alinhamento: novoValor} })}
-
-    // Barra dinamica 2
-    const [barraDinamica2, mudarbarraDinamica2] = useState({
-        habilitado: true,
-        cor: '#f78383',
-        corFundo: '#df4343',
-
-        valores: {
-            atual: 10,
-            maximo: 10,
-            cor: '#573e3e'
-        },
-
-        texto: {
-            habilitado: false,
-            mostrarAoAtualizar: true,
-            texto: 'Vida?',
-            alinhamento: 'center'
-        },
-        
-        borda: {
-            tamanho: '2',
-            estilo: 'solid',
-            cor: '#f92012',
-        },
-
-    })
-
-    const mudarHabilitarbarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, habilitado: novoValor })}
-    const mudarCorTextobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, cor: novoValor} } )}
-    const mudarAlinhamentoTextobarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, alinhamento: novoValor} })}
-    const mudarcorbarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, cor: novoValor })}
-    
-    const mudarcorFundobarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, corFundo: novoValor })}
-
-    const mudartamanhoBordabarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, borda: {...barraDinamica2.borda, tamanho: novoValor} })}
-    const mudarcorBordabarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, borda: {...barraDinamica2.borda, cor: novoValor} })}
-    const mudarestiloBordabarraDinamica2 = (novoValor) => {mudarbarraDinamica2({ ...barraDinamica2, borda: {...barraDinamica2.borda, estilo: novoValor} })}
-
-    const mudarValorAtualbarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, atual: novoValor} })}
-    const mudarValorMaximobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, valores: {...barraDinamica2.valores, maximo: novoValor} })}
-
-    const mudarTextoHabilitadobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, habilitado: novoValor} })}
-    const mudarTextoMudarAoAtualizarbarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, mostrarAoAtualizar: novoValor} })}
-    const mudarTextobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, texto: novoValor} })}
-    const mudarTextoAlinhamentobarraDinamica2 = (novoValor) => { mudarbarraDinamica2({ ...barraDinamica2, texto: {...barraDinamica2.texto, alinhamento: novoValor} })}
-
-
-    
+        axios.post('http://localhost:5000/mudar/', { 
+            imagem, barrasFixas, barrasDinamicas
+        });
+    }, [imagem, barrasFixas, barrasDinamicas]);
 
     useEffect(() => {
         handleSubmit();
         console.log('submit enviado')
-    }, [imagem, barraFixa1, barraFixa2, barraDinamica1, barraDinamica2]);
-
-    async function handleSubmit(e = '') {
-        if (e) e.preventDefault();
-
-        axios.post('http://localhost:5000/mudar/', { 
-            imagem, barraFixa1, barraFixa2, barraDinamica1, barraDinamica2
-        });
-    }
+    }, [handleSubmit]);
 
     function handleReset() {
         axios.get('http://localhost:5000/mudar/resetar');
     }
-
+ 
     return (
-        <>
+        <main id="controll">
         <h2><button type="submit" onClick={handleReset}>Reset</button>Controll <button type="submit" onClick={handleSubmit}>Enviar</button> </h2>
 
         <form style={{backgroundColor: '#232323'}}>
@@ -210,112 +237,154 @@ export default function Controll() {
              </div>
                         
             <div id="Barras">
-                <BarraTexto corBarra={'transparent'} corTexto={barraFixa1.texto.cor} texto={barraFixa1.texto.texto} handleChange={mudarNome} tamanhoBorda="0" habilitado={true} alinhamento={barraFixa1.texto.alinhamento}/>
-                    <div style={{display: "flex"}}>
-                        <TextoOptionColor texto={'Cor texto'} value={barraFixa1.texto.cor} changeValue={mudarCorTextoNome}/>
-                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraFixa1.habilitado} changeValue={mudarHabilitarNome}/>
-                        <select onChange={(e) => mudarAlinhamentoTextoNome(e.target.value)} select={barraFixa1.texto.alinhamento} multiple>
-                            <option value="left">Esquerda</option>
-                            <option value="center">Centro</option>
-                            <option value="right">Direita</option>
-                        </select>
-                        
-                    </div>
-                <hr />
-
-                {/* Barra fixa 2 */}
-                <BarraTexto corTexto={barraFixa2.texto.cor} corBarra={barraFixa2.cor} texto={barraFixa2.texto.texto} handleChange={mudartextoBarraFixa2} habilitado ={true} tamanhoBorda={barraFixa2.borda.tamanho+'px'} corBorda={barraFixa2.borda.cor} estiloBorda={barraFixa2.borda.estilo} alinhamento={barraFixa2.texto.alinhamento}/>
-                    <div style={{display: "flex"}}>
-                        <TextoOptionColor texto={'Cor texto'} value={barraFixa2.texto.cor} changeValue={mudarCorTextoBarraFixa2}/>
-                        <TextoOptionColor texto={'Cor da barra'} value={barraFixa2.cor} changeValue={mudarcorBarraFixa2}/>
-                        <TextoOptionColor texto={'Cor da borda da barra'} value={barraFixa2.borda.cor} changeValue={mudarcorBordaBarraFixa2}/>
-                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraFixa2.habilitado} changeValue={mudarHabilitarBarraFixa2}/>
-                        <div style={{ width:"fit-content", borderRight: 'solid white 1px', padding: "0 1%"}}>
-                            <p>Tamanho da borda</p>
-                            <input type="number" value={barraFixa2.borda.tamanho} onChange={(e) => mudartamanhoBordaBarraFixa2(e.target.value)} style={{display: "flex", width: '3rem'}}/>
+                {/* Dynamic Fixed Bars */}
+                <div>
+                <h2>Barras Fixas</h2>
+                {barrasFixas.map((barra) => (
+                    <div key={barra.id}>
+                        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px"}}>
+                            <h3>Barra Fixa {barra.id}</h3>
+                            <button 
+                                type="button"
+                                onClick={() => removeBarraFixa(barra.id)}
+                                style={{backgroundColor: '#FF4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '3px'}}
+                            >
+                                Remover
+                            </button>
                         </div>
-                        <select onChange={(e) => mudarestiloBordaBarraFixa2(e.target.value)} select={barraFixa2.borda.estilo} multiple>
-                            <option value="solid">Sólido</option>
-                            <option value="dashed">Dashed</option>
-                            <option value="dotted">Dotted</option>
-                            <option value="double">Duplo</option>
-                            <option value="groove">Groove</option>
-                            <option value="ridge">Ridge</option>
-                        </select>
-                        <select onChange={(e) => mudarAlinhamentoTextoBarraFixa2(e.target.value)} select={barraFixa2.texto.alinhamento} multiple>
-                            <option value="left">Esquerda</option>
-                            <option value="center">Centro</option>
-                            <option value="right">Direita</option>
-                        </select>
                         
-                    </div>
-                <hr />
-                {/* Barra dinamica 1 */}
-                <BarraDinamica corBarraFrente={barraDinamica1.cor} alinhamento={barraDinamica1.texto.alinhamento} estiloBorda={barraDinamica1.borda.estilo} controllRoom={true} corBarraFundo={barraDinamica1.corFundo} corTexto={barraDinamica1.valores.cor} tamanhoBorda={barraDinamica1.borda.tamanho} corBorda={barraDinamica1.borda.cor} atual={barraDinamica1.valores.atual} maximo={barraDinamica1.valores.maximo} texto={barraDinamica1.texto.texto} textoMostrar={true} habilitado ={true} mudarAtual={mudarValorAtualBarraDinamica1} mudarMaximo={mudarValorMaximoBarraDinamica1} mudarTexto={mudarTextoBarraDinamica1}/>
-                <div style={{display: "flex", flexWrap: "true"}}>
-                        <TextoOptionColor texto={'Cor texto'} value={barraDinamica1.valores.cor} changeValue={mudarCorTextoBarraDinamica1}/>
-                        <TextoOptionColor texto={'Cor da barra da frente'} value={barraDinamica1.cor} changeValue={mudarcorBarraDinamica1}/>
-                        <TextoOptionColor texto={'Cor da barra do fundo'} value={barraDinamica1.corFundo} changeValue={mudarcorFundoBarraDinamica1}/>
-                        <TextoOptionColor texto={'Cor da borda da barra'} value={barraDinamica1.borda.cor} changeValue={mudarcorBordaBarraDinamica1}/>
-                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraDinamica1.habilitado} changeValue={mudarHabilitarBarraDinamica1}/>
-                        <div style={{ width:"fit-content", borderRight: 'solid white 1px', padding: "0 1%"}}>
-                            <p>Tamanho da borda</p>
-                            <input type="number" value={barraDinamica1.borda.tamanho} onChange={(e) => mudartamanhoBordaBarraDinamica1(e.target.value)} style={{display: "flex", width: '3rem'}}/>
+                        <BarraTexto 
+                            corBarra={barra.cor} 
+                            corTexto={barra.texto.cor} 
+                            texto={barra.texto.texto} 
+                            handleChange={(value) => updateBarraFixaTexto(barra.id, 'texto', value)} 
+                            tamanhoBorda={barra.borda.tamanho+'px'} 
+                            habilitado={barra.habilitado} 
+                            alinhamento={barra.texto.alinhamento}
+                            corBorda={barra.borda.cor}
+                            estiloBorda={barra.borda.estilo}
+                        />
+                        
+                        <div style={{display: "flex", flexWrap: "wrap"}}>
+                            <TextoOptionColor texto={'Cor texto'} value={barra.texto.cor} changeValue={(value) => updateBarraFixaTexto(barra.id, 'cor', value)}/>
+                            <TextoOptionColor texto={'Cor da barra'} value={barra.cor} changeValue={(value) => updateBarraFixa(barra.id, 'cor', value)}/>
+                            <TextoOptionColor texto={'Cor da borda'} value={barra.borda.cor} changeValue={(value) => updateBarraFixaBorda(barra.id, 'cor', value)}/>
+                            <TextoOptionCheckbox texto={'Habilitado?'} value={barra.habilitado} changeValue={(value) => updateBarraFixa(barra.id, 'habilitado', value)}/>
+                            <div style={{ width:"fit-content", borderRight: 'solid white 1px', padding: "0 1%"}}>
+                                <p>Tamanho da borda</p>
+                                <input type="number" value={barra.borda.tamanho} onChange={(e) => updateBarraFixaBorda(barra.id, 'tamanho', e.target.value)} style={{display: "flex", width: '3rem'}}/>
+                            </div>
+                            
+                            <select onChange={(e) => updateBarraFixaBorda(barra.id, 'estilo', e.target.value)} value={barra.borda.estilo}>
+                                <option value="solid">Sólido</option>
+                                <option value="dashed">Dashed</option>
+                                <option value="dotted">Dotted</option>
+                                <option value="double">Duplo</option>
+                                <option value="groove">Groove</option>
+                                <option value="ridge">Ridge</option>
+                            </select>
+                            <select onChange={(e) => updateBarraFixaTexto(barra.id, 'alinhamento', e.target.value)} value={barra.texto.alinhamento}>
+                                <option value="left">Esquerda</option>
+                                <option value="center">Centro</option>
+                                <option value="right">Direita</option>
+                            </select>
+                            
                         </div>
-                        <select onChange={(e) => mudarestiloBordaBarraDinamica1(e.target.value)} select={barraDinamica1.borda.estilo} multiple>
-                            <option value="solid">Sólido</option>
-                            <option value="dashed">Dashed</option>
-                            <option value="dotted">Dotted</option>
-                            <option value="double">Duplo</option>
-                            <option value="groove">Groove</option>
-                            <option value="ridge">Ridge</option>
-                        </select>
+                        <hr />
                     </div>
-                    <h2>Texto sem mostrar os valores</h2>
-                    <div style={{display: "flex", flexWrap: "true", justifyContent: 'center'}}>
-                        
-                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraDinamica1.texto.habilitado} changeValue={mudarTextoHabilitadoBarraDinamica1}/>
-                        <TextoOptionCheckbox texto={'Mostrar valores quando atualizar'} value={barraDinamica1.texto.mostrarAoAtualizar} changeValue={mudarTextoMudarAoAtualizarBarraDinamica1}/>
-                        <select onChange={(e) => mudarTextoAlinhamentoBarraDinamica1(e.target.value)} select={barraDinamica1.texto.alinhamento} multiple>
-                            <option value="left">Esquerda</option>
-                            <option value="center">Centro</option>
-                            <option value="right">Direita</option>
-                        </select>
-                    </div>
+                ))}
+                
+                <button 
+                    type="button"
+                    onClick={addBarraFixa}
+                    style={{backgroundColor: '#44ff44', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', marginBottom: '20px'}}
+                >
+                    + Adicionar Barra Fixa
+                </button>
+                </div>
                 <hr />
-                {/* Barra dinamica 2 */}
-                <BarraDinamica corBarraFrente={barraDinamica2.cor} alinhamento={barraDinamica2.texto.alinhamento} estiloBorda={barraDinamica2.borda.estilo} controllRoom={true} corBarraFundo={barraDinamica2.corFundo} corTexto={barraDinamica2.valores.cor} tamanhoBorda={barraDinamica2.borda.tamanho} corBorda={barraDinamica2.borda.cor} atual={barraDinamica2.valores.atual} maximo={barraDinamica2.valores.maximo} texto={barraDinamica2.texto.texto} textoMostrar={true} habilitado ={true} mudarAtual={mudarValorAtualbarraDinamica2} mudarMaximo={mudarValorMaximobarraDinamica2} mudarTexto={mudarTextobarraDinamica2}/>
-                <div style={{display: "flex", flexWrap: "true"}}>
-                        <TextoOptionColor texto={'Cor texto'} value={barraDinamica2.valores.cor} changeValue={mudarCorTextobarraDinamica2}/>
-                        <TextoOptionColor texto={'Cor da barra da frente'} value={barraDinamica2.cor} changeValue={mudarcorbarraDinamica2}/>
-                        <TextoOptionColor texto={'Cor da barra do fundo'} value={barraDinamica2.corFundo} changeValue={mudarcorFundobarraDinamica2}/>
-                        <TextoOptionColor texto={'Cor da borda da barra'} value={barraDinamica2.borda.cor} changeValue={mudarcorBordabarraDinamica2}/>
-                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraDinamica2.habilitado} changeValue={mudarHabilitarbarraDinamica2}/>
-                        <div style={{ width:"fit-content", borderRight: 'solid white 1px', padding: "0 1%"}}>
-                            <p>Tamanho da borda</p>
-                            <input type="number" value={barraDinamica2.borda.tamanho} onChange={(e) => mudartamanhoBordabarraDinamica2(e.target.value)} style={{display: "flex", width: '3rem'}}/>
+                <div>
+                {/* Dynamic Dynamic Bars */}
+                <h2>Barras Dinâmicas</h2>
+                {barrasDinamicas.map((barra) => (
+                    <div key={barra.id}>
+                        <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px"}}>
+                            <h3>Barra Dinâmica {barra.id}</h3>
+                            <button 
+                                type="button"
+                                onClick={() => removeBarraDinamica(barra.id)}
+                                style={{backgroundColor: '#ff4444', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '3px'}}
+                            >
+                                Remover
+                            </button>
                         </div>
-                        <select onChange={(e) => mudarestiloBordabarraDinamica2(e.target.value)} select={barraDinamica2.borda.estilo} multiple>
-                            <option value="solid">Sólido</option>
-                            <option value="dashed">Dashed</option>
-                            <option value="dotted">Dotted</option>
-                            <option value="double">Duplo</option>
-                            <option value="groove">Groove</option>
-                            <option value="ridge">Ridge</option>
-                        </select>
-                    </div>
-                    <h2>Texto sem mostrar os valores</h2>
-                    <div style={{display: "flex", flexWrap: "true", justifyContent: 'center'}}>
                         
-                        <TextoOptionCheckbox texto={'Habilitado?'} value={barraDinamica2.texto.habilitado} changeValue={mudarTextoHabilitadobarraDinamica2}/>
-                        <TextoOptionCheckbox texto={'Mostrar valores quando atualizar'} value={barraDinamica2.texto.mostrarAoAtualizar} changeValue={mudarTextoMudarAoAtualizarbarraDinamica2}/>
-                        <select onChange={(e) => mudarTextoAlinhamentobarraDinamica2(e.target.value)} select={barraDinamica2.texto.alinhamento} multiple>
-                            <option value="left">Esquerda</option>
-                            <option value="center">Centro</option>
-                            <option value="right">Direita</option>
-                        </select>
+                        <BarraDinamica 
+                            corBarraFrente={barra.cor} 
+                            alinhamento={barra.texto.alinhamento} 
+                            estiloBorda={barra.borda.estilo} 
+                            controllRoom={true} 
+                            corBarraFundo={barra.corFundo} 
+                            corTexto={barra.valores.cor} 
+                            tamanhoBorda={barra.borda.tamanho} 
+                            corBorda={barra.borda.cor} 
+                            atual={barra.valores.atual} 
+                            maximo={barra.valores.maximo} 
+                            texto={barra.texto.texto} 
+                            textoMostrar={true} 
+                            habilitado={barra.habilitado} 
+                            mostrarValorQuandoAtualizado={barra.texto.mostrarAoAtualizar}
+                            mudarAtual={(value) => updateBarraDinamicaValores(barra.id, 'atual', value)} 
+                            mudarMaximo={(value) => updateBarraDinamicaValores(barra.id, 'maximo', value)} 
+                            mudarTexto={(value) => updateBarraDinamicaTexto(barra.id, 'texto', value)}
+                        />
+                        
+                        <div style={{display: "flex", flexWrap: "wrap"}}>
+                            <TextoOptionColor texto={'Cor texto'} value={barra.valores.cor} changeValue={(value) => updateBarraDinamicaValores(barra.id, 'cor', value)}/>
+                            <TextoOptionColor texto={'Cor da barra da frente'} value={barra.cor} changeValue={(value) => updateBarraDinamica(barra.id, 'cor', value)}/>
+                            <TextoOptionColor texto={'Cor da barra do fundo'} value={barra.corFundo} changeValue={(value) => updateBarraDinamica(barra.id, 'corFundo', value)}/>
+                            <TextoOptionColor texto={'Cor da borda da barra'} value={barra.borda.cor} changeValue={(value) => updateBarraDinamicaBorda(barra.id, 'cor', value)}/>
+                            <TextoOptionCheckbox texto={'Habilitado?'} value={barra.habilitado} changeValue={(value) => updateBarraDinamica(barra.id, 'habilitado', value)}/>
+                            <div style={{ width:"fit-content", borderRight: 'solid white 1px', padding: "0 1%"}}>
+                                <p>Tamanho da borda</p>
+                                <input type="number" value={barra.borda.tamanho} onChange={(e) => updateBarraDinamicaBorda(barra.id, 'tamanho', e.target.value)} style={{display: "flex", width: '3rem'}}/>
+                            </div>
+                            <select onChange={(e) => updateBarraDinamicaBorda(barra.id, 'estilo', e.target.value)} value={barra.borda.estilo}>
+                                <option value="solid">Sólido</option>
+                                <option value="dashed">Dashed</option>
+                                <option value="dotted">Dotted</option>
+                                <option value="double">Duplo</option>
+                                <option value="groove">Groove</option>
+                                <option value="ridge">Ridge</option>
+                            </select>
+                        </div>
+                        
+                        <h4>Texto sem mostrar os valores</h4>
+                        <div style={{display: "flex", flexWrap: "wrap", justifyContent: 'center'}}>
+                            <TextoOptionCheckbox texto={'Habilitado?'} value={barra.texto.habilitado} changeValue={(value) => updateBarraDinamicaTexto(barra.id, 'habilitado', value)}/>
+                            <TextoOptionCheckbox texto={'Mostrar valores quando atualizar'} value={barra.texto.mostrarAoAtualizar} changeValue={(value) => updateBarraDinamicaTexto(barra.id, 'mostrarAoAtualizar', value)}/>
+                            <p>Centralização<br/> do texto</p>
+                            <select onChange={(e) => updateBarraDinamicaTexto(barra.id, 'alinhamento', e.target.value)} value={barra.texto.alinhamento}>
+                                <option value="left">Esquerda</option>
+                                <option value="center">Centro</option>
+                                <option value="right">Direita</option>
+                            </select>
+                            <p>Tempo de mostrar <br/> os valores</p>
+                            <input type="number" value={barra.texto.tempoMostrarValoresTemporariamente} onChange={(e) => updateBarraDinamicaTexto(barra.id, 'tempoMostrarValoresTemporariamente', e.target.value)} style={{display: "flex", width: '3rem'}}/>
+                        </div>
+                        <hr />
                     </div>
+                ))}
+                
+                <button 
+                    type="button"
+                    onClick={addBarraDinamica}
+                    style={{backgroundColor: '#4444ff', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '5px', marginBottom: '20px'}}
+                >
+                    + Adicionar Barra Dinâmica
+                </button>
                 <hr />
+                </div>
             </div>
 
 
@@ -327,6 +396,6 @@ export default function Controll() {
         </form>
         <hr/>
         {/* <View/> */}
-        </>
+        </main>
     )
 }

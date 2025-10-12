@@ -2,28 +2,26 @@ import { useEffect, useState } from "react";
 
 export default function BarraDinamica({
     corBarraFrente = '#000',
-    corBarraFundo = '#fff', 
+    corBarraFundo = '#ffffff', 
     atual = 1, 
     maximo = 10,
-    corBorda = '#fff', 
+    corBorda = '#ffffff', 
     tamanhoBorda = '2px', 
     estiloBorda = 'solid', 
-    corTexto = '#808080',
+    corTexto = '#202020',
     texto = '',
     textoMostrar,
     habilitado = true,
     mudarAtual,
     mudarMaximo,
-    mostrarValorQuandoAtualizado,
+    mostrarValorQuandoAtualizado = false,
     controllRoom = false,
     mudarTexto,
-    alinhamento
-
+    alinhamento,
+    tempoMostrarValoresTemporariamente = 2
     }) {
     
-    const [mostrarTexto, mudarMostrarTexto] = useState();
-
-    if (!habilitado) return
+    const [mostrarValoresTemporariamente, setMostrarValoresTemporariamente] = useState(false);
 
     function lerp(atual, max) {
         // (atual - 0) / (max - 0)
@@ -36,19 +34,23 @@ export default function BarraDinamica({
         return `${Math.min(linearInterpolated, 100)}%`;
     }
 
-    // useEffect(()=> {
+    // Effect to show values temporarily when they change
+    useEffect(() => {
+        // Only trigger if texto is enabled AND mostrarValorQuandoAtualizado is enabled
+        if (textoMostrar && mostrarValorQuandoAtualizado) {
+            // Show the values temporarily
+            setMostrarValoresTemporariamente(true);
+            
+            // Hide the values after 1 second and return to showing text
+            const timeout = setTimeout(() => {
+                setMostrarValoresTemporariamente(false);
+            }, tempoMostrarValoresTemporariamente * 1000);
+            
+            return () => clearTimeout(timeout);
+        }
+    }, [atual, maximo, textoMostrar, mostrarValorQuandoAtualizado, tempoMostrarValoresTemporariamente]);
 
-    //     if (textoMostrar && mostrarTexto) {
-
-    //         mudarMostrarTexto(false);
-    //         const interval = setInterval(() => {
-    //             mudarMostrarTexto(true);
-    //         }, 1000);
-    //         return () => clearInterval(interval);
-
-    //     }
-
-    // }, [atual]);
+    if (!habilitado) return
 
     if (controllRoom) {
         return (
@@ -124,22 +126,35 @@ export default function BarraDinamica({
 
             </div>
             
-            {textoMostrar ?
-             <input type="text" value={texto} style={{color: corTexto, textAlign: alinhamento}}/> :
-            <>
-            <input type="number" value={atual} min={0} max={maximo} onChange={(e) => {mudarAtual(e.target.value)}}
-            style={{
-                color: corTexto,
-                textAlign: 'right'
-            }}
-            />
-            <input type="text" value={'/'} style={{width: '1rem', color: corTexto}} />
-            <input type="number" value={maximo} min={atual} onChange={(e) => mudarMaximo(e.target.value)}
-            style={{
-                color: corTexto,
-                textAlign: 'left'
-            }}
-            /></>}
+            {/* Logic for what to display */}
+            {(textoMostrar && mostrarValorQuandoAtualizado && mostrarValoresTemporariamente) ? (
+                // Show values temporarily when both conditions are met and values are being shown
+                <>
+                    <input type="text" value={atual} style={{color: corTexto, textAlign: 'right', width: '3rem'}} readOnly/>
+                    <input type="text" value={'/'} style={{width: '1rem', color: corTexto}} readOnly/>
+                    <input type="text" value={maximo} style={{color: corTexto, textAlign: 'left', width: '3rem'}} readOnly/>
+                </>
+            ) : textoMostrar ? (
+                // Show text when texto is enabled but not showing values temporarily
+                <input type="text" value={texto} style={{color: corTexto, textAlign: alinhamento, width: 'fit-content'}} readOnly/>
+            ) : (
+                // Show editable values when texto is disabled
+                <>
+                    <input type="number" value={atual} min={0} max={maximo} onChange={(e) => {mudarAtual(e.target.value)}}
+                    style={{
+                        color: corTexto,
+                        textAlign: 'right'
+                    }}
+                    />
+                    <input type="text" value={'/'} style={{width: '1rem', color: corTexto}} />
+                    <input type="number" value={maximo} min={atual} onChange={(e) => mudarMaximo(e.target.value)}
+                    style={{
+                        color: corTexto,
+                        textAlign: 'left'
+                    }}
+                    />
+                </>
+            )}
             
         
         </div>
