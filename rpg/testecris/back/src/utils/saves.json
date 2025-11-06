@@ -1,36 +1,7 @@
-const fs = require('fs');
 
-// Read file asynchronously with callback
-
-async function readSave() {
-    fs.readFile('./src/utils/saves.json', 'utf-8', (err, data) => {
-    if (err) {
-        console.error('Error reading file:', err);
-        return;
-    }
-    return data;
-    });
-}
-
-
-class DB {
-    #db = []
-    constructor() {
-        this.#db = [];
-        this.presetAtual = 0;
-        // this.loadSave();
-        this.criarPreset()
-        console.log(this.#db)
-    }
-
-    async loadSave() {
-      console.log(await readSave());
-      this.#db.push(await readSave());
-    }
-
-
-    criarPreset() {
-        this.#db.push({"imagem": {
+[
+    {
+    "imagem": {
             "rounded": "20",
             "roundedU": "%",
             "folder": "",
@@ -115,34 +86,5 @@ class DB {
                 "cor": "#0B0029FF"
               }
             }
-      ]});
-    }
-
-    listarItem() {
-        return this.#db[this.presetAtual];
-    }
-
-    listarTodos() {
-        return this.#db;
-    }
-
-    mudar(key, value) {
-        this.#db[this.presetAtual][key] = value;
-    }
-
-    reset() {
-        this.#db[this.presetAtual] = {};
-    }   
-
-    resetAll() {
-        this.#db = [];
-    } 
-
-    mudarPresetAtual(id) {
-        this.presetAtual = id;
-    }
-
-
-}
-
-module.exports = new DB();
+      ]}
+]

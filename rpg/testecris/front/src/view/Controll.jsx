@@ -6,10 +6,30 @@ import TextoOptionCheckbox from "../assets/props/Combinacoes/TextoOptionCheckbox
 
 import BarraTexto from "../assets/props/BarraTexto";
 import BarraDinamica from "../assets/props/BarraDinamica";
+import Presets from "../assets/props/Presets";
 
 import Imagem from "../assets/props/Imagem";
 
+
 export default function Controll() {
+
+    const TempoAposEdicao = 3; // Segundos
+
+    function loadState(newState) {
+        mudarImagem(newState.imagem);
+        setBarrasFixas(newState.barrasFixas);
+        setBarrasDinamicas(newState.barrasDinamicas);
+    }
+
+    async function loadFromBD() {
+        const response = await axios.get('http://localhost:5000/memoria');
+        loadState(response.data);
+    }
+
+    useEffect(() => {
+        loadFromBD()
+    }, [])
+    
 
     const [imagem, mudarImagem] = useState({
         rounded: '20',
@@ -208,8 +228,15 @@ export default function Controll() {
     }, [imagem, barrasFixas, barrasDinamicas]);
 
     useEffect(() => {
-        handleSubmit();
-        console.log('submit enviado')
+        const timer = setTimeout(() => {
+        handleSubmit()
+    }, TempoAposEdicao * 1000); // 3000 milissegundos = 3 segundos
+
+    // Função de limpeza para limpar o temporizador quando o componente for desmontado
+    return () => {
+      clearTimeout(timer);
+    };
+
     }, [handleSubmit]);
 
     function handleReset() {
@@ -219,6 +246,7 @@ export default function Controll() {
     return (
         <main id="controll">
         <h2><button type="submit" onClick={handleReset}>Reset</button>Controll <button type="submit" onClick={handleSubmit}>Enviar</button> </h2>
+        
 
         <form style={{backgroundColor: '#232323'}}>
             <div id="total">
@@ -234,6 +262,7 @@ export default function Controll() {
                 <input type="text" onChange={(e) => mudarFolder(e.target.value)} value={imagem.folder}/>
                 <p>Nome do arquivo (com extenção)</p>
                 <input type="text" onChange={(e) => mudarImgName(e.target.value)} value={imagem.imgName}/>
+                <Presets loadState={loadState}></Presets>
              </div>
                         
             <div id="Barras">
