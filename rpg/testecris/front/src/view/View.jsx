@@ -26,8 +26,7 @@ export default function View() {
     const tempoDeAtualizacao = 500; // milissegundos
 
     async function atualizarDados() {
-        const response = await axios.get('http://localhost:5000/mudar');
-
+        const response = await axios.get('http://localhost:5000/memoria');
         mudarImagem(response.data.imagem);
         
         // Handle arrays if they exist, otherwise fallback to individual bars for backward compatibility
