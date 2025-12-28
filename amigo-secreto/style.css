@@ -1,0 +1,25 @@
+body {
+    background-color: #232323;
+    width: 100%;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    color: whitesmoke;
+}
+
+div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+button {
+    width: 80vw;
+    height: 3rem;
+    font-size: 2.5rem;
+    margin-top: 3rem;
+}
+
+strong {
+    color: rgb(219, 53, 53);
+    font-size: 5rem;
+}
