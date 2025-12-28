@@ -46,7 +46,7 @@ for (let nome of nomes) {
     principal.appendChild(objeto);
 }
 
-const ALEATORIEDADE = 4124
+const ALEATORIEDADE = 4126
 let zip = {};
 function zipar(lista) {
     let listaNova = lista;
