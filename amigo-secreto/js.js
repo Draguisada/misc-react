@@ -46,7 +46,7 @@ for (let nome of nomes) {
     principal.appendChild(objeto);
 }
 
-const ALEATORIEDADE = 4126
+const ALEATORIEDADE = 4125;
 let zip = {};
 function zipar(lista) {
     let listaNova = lista;
@@ -56,21 +56,22 @@ function zipar(lista) {
     
 
     let valor2 = 1431;
-    let nomes = [listaNova[valor1], '1']
+    let nomes = [listaNova[valor1], '1'];
+    const nomeNaoRepetir = nomes[0];
     let iteracoes = 0;
     while(listaNova.length > 0) {
-        // Remover o nome
-        if (iteracoes != 0) {
-            listaNova = listaNova.filter((umDosNomes) => umDosNomes != nomes[0])
-        }
-        iteracoes++;
 
         if (listaNova.length != 1){
+            // Remover o nome
+            if (iteracoes != 0) {
+                listaNova = listaNova.filter((umDosNomes) => umDosNomes != nomes[0])
+            }
+            iteracoes++;
             //Aleatoriezar
             valor2 += ALEATORIEDADE;
             valor2 %= listaNova.length;
 
-            while (valor1 == valor2) {
+            while (valor1 == valor2 || (iteracoes == 2 && nomeNaoRepetir == listaNova[valor2])) {
                 valor2 += 1;
                 valor2 %= listaNova.length;
             }
