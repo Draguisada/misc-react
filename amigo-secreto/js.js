@@ -16,87 +16,98 @@ function xorDecrypt(b64, key) {
   return new TextDecoder().decode(out);
 }
 
-nomesCriptografados = {
-    "Bruna": "QnJ1bmE=",
-    "Bruno": "RHJhZ3U=",
-    "Lara": "TGFyYQ==",
-    "Catarina": "Q2F0YXJpbmE=",
-    "Maria": "TWFyaWE=",
-    "Sophia": "U29waGlh"
-}
-
-
-function descobrirColega(e) {
-    const colega = e.target.innerText;
-    escolhido.innerText= zip[colega];
-    principal.style.display = 'none';
-
-}
-
-nomes = Object.keys(nomesCriptografados);
-criptografia = Object.values(nomesCriptografados);
+const nomesCriptografados = {
+  "Bruna": "QnJ1bmE=",
+  "Bruno": "RHJhZ3U=",
+  "Lara": "TGFyYQ==",
+  "Catarina": "Q2F0YXJpbmE=",
+  "Maria": "TWFyaWE=",
+  "Sophia": "U29waGlh"
+};
 
 const principal = document.getElementById('principal');
 const escolhido = document.getElementById('escolhida');
-// Criar os nomes
+
+const nomes = Object.keys(nomesCriptografados);
+
 for (let nome of nomes) {
-    const objeto = document.createElement('button');
-    objeto.addEventListener('click', descobrirColega)
-    objeto.innerText = nome;
-    principal.appendChild(objeto);
+  const objeto = document.createElement('button');
+  objeto.addEventListener('click', descobrirColega);
+  objeto.innerText = nome;
+  principal.appendChild(objeto);
 }
 
-const ALEATORIEDADE = 4125;
+function descobrirColega(e) {
+  const colega = e.currentTarget.innerText;
+  const destino = zip[colega];
+  escolhido.innerText = destino ?? '(sem par)';
+  principal.style.display = 'none';
+}
+
+const ALEATORIEDADE = 4126;
 let zip = {};
+let ordem = []; // guarda a ordem embaralhada para validação ou depuração
+
+// RNG determinístico (LCG) baseado na semente ALEATORIEDADE
+function makeRNG(seed) {
+  return function rand() {
+    // LCG clássico (Numerical Recipes): X_{n+1} = (a*X_n + c) mod 2^32
+    seed = (seed * 1664525 + 1013904223) >>> 0;
+    return seed / 2**32; // [0,1)
+  };
+}
+
+// Fisher–Yates usando RNG determinístico
+function shuffleDeterministico(arr, seed) {
+  const a = arr.slice();
+  const rand = makeRNG(seed);
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Cria um ciclo único: cada nome aponta para o próximo na ordem embaralhada
 function zipar(lista) {
-    let listaNova = lista;
+  const len = lista.length;
+  zip = {};
 
-    let valor1 = ALEATORIEDADE+1421;
-    valor1 %= listaNova.length;
-    
+  if (len <= 1) return;
 
-    let valor2 = 1431;
-    let nomes = [listaNova[valor1], '1'];
-    const nomeNaoRepetir = nomes[0];
-    let iteracoes = 0;
-    while(listaNova.length > 0) {
+  ordem = shuffleDeterministico(lista, ALEATORIEDADE + 1421);
 
-        if (listaNova.length != 1){
-            // Remover o nome
-            if (iteracoes != 0) {
-                listaNova = listaNova.filter((umDosNomes) => umDosNomes != nomes[0])
-            }
-            iteracoes++;
-            //Aleatoriezar
-            valor2 += ALEATORIEDADE;
-            valor2 %= listaNova.length;
+  for (let i = 0; i < len; i++) {
+    const origem = ordem[i];
+    const destino = ordem[(i + 1) % len];
+    zip[origem] = destino;
+  }
+}
 
-            while (valor1 == valor2 || (iteracoes == 2 && nomeNaoRepetir == listaNova[valor2])) {
-                valor2 += 1;
-                valor2 %= listaNova.length;
-            }
+// Validação: checa se é um único ciclo (visita todos e volta ao início)
+function testar() {
+  const valores = Object.values(zip);
+  if (valores.some(v => v === undefined)) {
+    console.log('apareceu undefined');
+    return;
+  }
 
-            // Colocar o nome na variavel
-            nomes[1] = listaNova[valor2];
-        } else {
-            // Quando não tem mais opção
-            nomes[1] = listaNova[0];
-        }
+  if (ordem.length === 0) {
+    console.log('ordem vazia');
+    return;
+  }
 
-        // Coloca os nomes no zip
-        zip[nomes[0]] = nomes[1];
+  const visitados = new Set();
+  let atual = ordem[0];
+  for (let i = 0; i < ordem.length; i++) {
+    if (visitados.has(atual)) break;
+    visitados.add(atual);
+    atual = zip[atual];
+  }
 
-        // O selecionado vai virar o q escolhe
-        nomes[0] = nomes[1]
-
-        if (listaNova.length == 1) { break }
-
-        
-
-        
-        
-        // listaNova = listaNova.filter((umDosNomes) => umDosNomes != nomes[1])
-    }
+  const cicloCompleto = (visitados.size === ordem.length) && (atual === ordem[0]);
+  console.log(cicloCompleto ? 'ciclo único OK' : 'ciclo inválido');
 }
 
 zipar(nomes);
+testar();
