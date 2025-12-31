@@ -22,7 +22,8 @@ const nomesCriptografados = {
   "Lara": "TGFyYQ==",
   "Catarina": "Q2F0YXJpbmE=",
   "Maria": "TWFyaWE=",
-  "Sophia": "U29waGlh"
+  "Sophia": "U29waGlh",
+  "Angela": "asda"
 };
 
 const principal = document.getElementById('principal');
@@ -52,7 +53,7 @@ let ordem = []; // guarda a ordem embaralhada para validação ou depuração
 function makeRNG(seed) {
   return function rand() {
     // LCG clássico (Numerical Recipes): X_{n+1} = (a*X_n + c) mod 2^32
-    seed = (seed * 1664525 + 1013904223) >>> 0;
+    seed = (seed * 1664525 + 1013904229) >>> 0;
     return seed / 2**32; // [0,1)
   };
 }
